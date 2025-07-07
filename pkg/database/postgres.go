@@ -5,18 +5,27 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"github.com/lukkytung/gokit/pkg/config"
+	"github.com/lukkytung/gokit/pkg/logger"
 )
 
+// Global DB instance
 var DB *gorm.DB
 
-func InitPostgres(user, password, host string, port int, dbname string) error {
+// InitPostgres 初始化 PostgreSQL 数据库连接
+func InitPostgres() error {
+	dbConfig := config.AppConfig.Database
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
-		host, user, password, dbname, port)
+		dbConfig.Host, dbConfig.User, dbConfig.Password, dbConfig.Name, dbConfig.Port)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
+		logger.Log.Errorf("Failed to connect to database: %v", err)
 		return err
 	}
+
 	DB = db
+	logger.Log.Info("PostgreSQL connected successfully")
 	return nil
 }

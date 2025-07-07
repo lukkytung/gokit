@@ -7,8 +7,25 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// GenerateToken 生成 JWT 令牌
-func GenerateToken(uid string, duration time.Duration) (string, error) {
+// 生成access token
+func GenerateAccessToken(uid string, duration time.Duration) (string, error) {
+	if duration == 0 {
+		duration = 15 * time.Minute
+	}
+	secretKey := os.Getenv("JWT_SECRET_KEY")
+	claims := jwt.MapClaims{
+		"uid": uid,
+		"exp": time.Now().Add(duration).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(secretKey)
+}
+
+// 生成refresh token
+func GenerateRefreshToken(uid string, duration time.Duration) (string, error) {
+	if duration == 0 {
+		duration = 7 * 24 * time.Hour
+	}
 	secretKey := os.Getenv("JWT_SECRET_KEY")
 	claims := jwt.MapClaims{
 		"uid": uid,

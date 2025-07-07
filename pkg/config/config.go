@@ -21,6 +21,7 @@ type Config struct {
 	RedisPort        int
 	RedisPassword    string
 	RedisDb          int
+	JwtSecretKey     string
 }
 
 // 全局配置变量
@@ -46,6 +47,7 @@ func InitConfig() error {
 	viper.BindEnv("RedisPort", "REDIS_PORT")
 	viper.BindEnv("RedisPassword", "REDIS_PASSWORD")
 	viper.BindEnv("RedisDb", "REDIS_DB")
+	viper.BindEnv("JwtSecretKey", "JWT_SECRET_KEY")
 
 	// 反序列化环境变量到 Config 结构体
 	err := viper.Unmarshal(&AppConfig)

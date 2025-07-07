@@ -15,7 +15,7 @@ import (
 func main() {
 	// 初始化日志
 	logger.InitLogger()
-	defer logger.Shutdown()
+	// defer logger.Shutdown()
 
 	// 初始化配置
 	if err := config.InitConfig(); err != nil {

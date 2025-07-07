@@ -25,9 +25,8 @@ func main() {
 		log.Fatal("Error connecting to database")
 	}
 
-	redisConfig := config.AppConfig.Redis
 	// 初始化 Redis
-	redis.InitRedis(redisConfig.Host, fmt.Sprint(redisConfig.Port), redisConfig.Password, redisConfig.Db)
+	redis.InitRedis()
 
 	// 示例输出
 	fmt.Println("Application started successfully")

@@ -2,7 +2,9 @@ package redis
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/lukkytung/gokit/pkg/config"
 	"github.com/lukkytung/gokit/pkg/logger"
 
 	"github.com/go-redis/redis/v8"
@@ -12,9 +14,15 @@ import (
 var Client *redis.Client
 
 // InitRedis 初始化 Redis 客户端
-func InitRedis(addr, port, password string, db int) {
+func InitRedis() {
+
+	redisConfig := config.AppConfig.Redis
+	addr := redisConfig.Host + ":" + fmt.Sprint(redisConfig.Port)
+	password := redisConfig.Password
+	db := redisConfig.Db
+
 	Client = redis.NewClient(&redis.Options{
-		Addr:     addr + ":" + port,
+		Addr:     addr,
 		Password: password,
 		DB:       db,
 	})

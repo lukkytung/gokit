@@ -1,18 +1,18 @@
 package jwt
 
 import (
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secretKey = []byte("your_secret_key") // 应该从配置中获取
-
 // GenerateToken 生成 JWT 令牌
-func GenerateToken(userID string, duration time.Duration) (string, error) {
+func GenerateToken(uid string, duration time.Duration) (string, error) {
+	secretKey := os.Getenv("JWT_SECRET_KEY")
 	claims := jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(duration).Unix(),
+		"uid": uid,
+		"exp": time.Now().Add(duration).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(secretKey)
@@ -20,6 +20,7 @@ func GenerateToken(userID string, duration time.Duration) (string, error) {
 
 // ParseToken 解析 JWT 令牌并返回用户信息
 func ParseToken(tokenStr string) (jwt.MapClaims, error) {
+	secretKey := os.Getenv("JWT_SECRET_KEY")
 	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})

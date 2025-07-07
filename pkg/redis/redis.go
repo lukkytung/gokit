@@ -16,10 +16,10 @@ var Client *redis.Client
 // InitRedis 初始化 Redis 客户端
 func InitRedis() {
 
-	redisConfig := config.AppConfig.Redis
-	addr := redisConfig.Host + ":" + fmt.Sprint(redisConfig.Port)
-	password := redisConfig.Password
-	db := redisConfig.Db
+	redisConfig := config.AppConfig
+	addr := redisConfig.RedisHost + ":" + fmt.Sprint(redisConfig.RedisPort)
+	password := redisConfig.RedisPassword
+	db := redisConfig.RedisDb
 
 	Client = redis.NewClient(&redis.Options{
 		Addr:     addr,

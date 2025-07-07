@@ -26,7 +26,9 @@ func InitLogger() {
 
 // Shutdown 用于优雅关闭日志
 func Shutdown() {
-	if err := Log.Sync(); err != nil && !strings.Contains(err.Error(), "inappropriate ioctl for device") {
+	if err := Log.Sync(); err != nil &&
+		!strings.Contains(err.Error(), "inappropriate ioctl for device") &&
+		!strings.Contains(err.Error(), "bad file descriptor") {
 		Log.Errorf("Failed to sync logger: %v", err)
 	}
 }

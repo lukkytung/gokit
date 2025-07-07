@@ -15,9 +15,10 @@ var DB *gorm.DB
 
 // InitPostgres 初始化 PostgreSQL 数据库连接
 func InitPostgres() error {
-	dbConfig := config.AppConfig.Database
+	dbConfig := config.AppConfig
+
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
-		dbConfig.Host, dbConfig.User, dbConfig.Password, dbConfig.Name, dbConfig.Port)
+		dbConfig.DatabaseHost, dbConfig.DatabaseUser, dbConfig.DatabasePassword, dbConfig.DatabaseName, dbConfig.DatabasePort)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

@@ -29,8 +29,9 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 将用户信息传递到上下文
-		c.Set("user", claims["user_id"])
-		logger.Log.Infof("Authenticated user: %s", claims["user_id"])
+		c.Set("uid", claims["uid"])
+		logger.Log.Infof("Authenticated user: %s", claims["uid"])
+
 		c.Next()
 	}
 }

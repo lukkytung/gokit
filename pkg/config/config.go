@@ -22,6 +22,11 @@ type Config struct {
 	RedisPassword    string
 	RedisDb          int
 	JwtSecretKey     string
+	EmailSmtpHost    string
+	EmailUser        string
+	EmailPass        string
+	EmailFrom        string
+	EmailSmtpPort    string
 }
 
 // 全局配置变量
@@ -48,6 +53,11 @@ func InitConfig() error {
 	viper.BindEnv("RedisPassword", "REDIS_PASSWORD")
 	viper.BindEnv("RedisDb", "REDIS_DB")
 	viper.BindEnv("JwtSecretKey", "JWT_SECRET_KEY")
+	viper.BindEnv("EmailSmtpHost", "EMAIL_SMTP_HOST")
+	viper.BindEnv("EmailUser", "EMAIL_USER")
+	viper.BindEnv("EmailPass", "EMAIL_PASS")
+	viper.BindEnv("EmailFrom", "EMAIL_FROM")
+	viper.BindEnv("EmailSmtpPort", "EMAIL_SMTP_PORT")
 
 	// 反序列化环境变量到 Config 结构体
 	err := viper.Unmarshal(&AppConfig)

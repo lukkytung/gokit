@@ -2,10 +2,10 @@ package redis
 
 import (
 	"context"
-	"fmt"
+	"log"
+	"strconv"
 
 	"github.com/lukkytung/gokit/pkg/config"
-	"github.com/lukkytung/gokit/pkg/logger"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -17,7 +17,7 @@ var Client *redis.Client
 func InitRedis() {
 
 	redisConfig := config.AppConfig
-	addr := redisConfig.RedisHost + ":" + fmt.Sprint(redisConfig.RedisPort)
+	addr := redisConfig.RedisHost + ":" + strconv.Itoa(redisConfig.RedisPort)
 	password := redisConfig.RedisPassword
 	db := redisConfig.RedisDb
 
@@ -29,7 +29,7 @@ func InitRedis() {
 
 	// 测试 Redis 连接
 	if _, err := Client.Ping(context.Background()).Result(); err != nil {
-		logger.Log.Fatalf("Failed to connect to Redis: %v", err)
+		log.Fatalf("Failed to connect to Redis: %v", err)
 	}
-	logger.Log.Info("Redis connected successfully")
+	log.Println("Redis connected successfully")
 }

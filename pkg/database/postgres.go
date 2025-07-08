@@ -2,12 +2,12 @@ package database
 
 import (
 	"fmt"
+	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	"github.com/lukkytung/gokit/pkg/config"
-	"github.com/lukkytung/gokit/pkg/logger"
 )
 
 // Global DB instance
@@ -22,11 +22,11 @@ func InitPostgres() error {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		logger.Log.Errorf("Failed to connect to database: %v", err)
+		log.Fatalf("Failed to connect to database: %v", err)
 		return err
 	}
 
 	DB = db
-	logger.Log.Info("PostgreSQL connected successfully")
+	log.Println("PostgreSQL connected successfully")
 	return nil
 }

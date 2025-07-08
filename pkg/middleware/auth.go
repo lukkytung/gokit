@@ -1,12 +1,12 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lukkytung/gokit/pkg/jwt"
-	"github.com/lukkytung/gokit/pkg/logger"
 )
 
 // AuthMiddleware JWT 鉴权中间件
@@ -30,7 +30,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		// 将用户信息传递到上下文
 		c.Set("uid", claims["uid"])
-		logger.Log.Infof("Authenticated user: %s", claims["uid"])
+		log.Fatalf("Authenticated user: %s", claims["uid"])
 
 		c.Next()
 	}

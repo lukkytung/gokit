@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -9,14 +8,10 @@ import (
 	"github.com/lukkytung/gokit/example/router"
 	"github.com/lukkytung/gokit/pkg/config"
 	"github.com/lukkytung/gokit/pkg/database"
-	"github.com/lukkytung/gokit/pkg/logger"
 	"github.com/lukkytung/gokit/pkg/redis"
 )
 
 func main() {
-	// 初始化日志
-	logger.InitLogger()
-	// defer logger.Shutdown()
 
 	// 初始化配置
 	if err := config.InitConfig(); err != nil {
@@ -40,6 +35,4 @@ func main() {
 
 	r.Run(":" + config.AppConfig.ServerPort)
 
-	// 示例输出
-	fmt.Println("Application started successfully")
 }

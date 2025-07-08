@@ -19,9 +19,7 @@ import (
 var ctx = context.Background()
 
 type SendEmailRequest struct {
-	Email   string `json:"email"`
-	Subject string `json:"subject"`
-	Body    string `json:"body"`
+	Email string `json:"email"`
 }
 
 type LoginRequest struct {
@@ -30,10 +28,7 @@ type LoginRequest struct {
 }
 
 func SendCode(c *gin.Context) {
-	type Req struct {
-		Email string `json:"email"`
-	}
-	var req Req
+	var req SendEmailRequest
 	// 解析请求体中的 email
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(400, gin.H{"error": "Invalid email"})

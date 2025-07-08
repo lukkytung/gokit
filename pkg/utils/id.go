@@ -15,6 +15,10 @@ func InitIDGenerator() {
 	}
 }
 
-func GenerateID() (uint64, error) {
-	return sf.NextID()
+func GenerateID() (uint, error) {
+	id, err := sf.NextID()
+	if err != nil {
+		return 0, err
+	}
+	return uint(id), nil
 }

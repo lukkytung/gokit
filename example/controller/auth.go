@@ -82,11 +82,10 @@ func LoginWithCode(c *gin.Context) {
 	if err := db.Where("email = ?", req.Email).First(&user).Error; err != nil {
 		user = model.User{Email: req.Email}
 		db.Create(&user)
-		fmt.Println("user created", user)
 	}
 
 	// 生成 JWT token
-	accessToken, _ := jwt.GenerateAccessToken(strconv.FormatUint(user.Uid, 10), time.Minute*15)
-	refreshToken, _ := jwt.GenerateRefreshToken(strconv.FormatUint(user.Uid, 10), time.Hour*24*30)
+	accessToken, _ := jwt.GenerateAccessToken(strconv.Itoa(int(user.Uid)), time.Minute*15)
+	refreshToken, _ := jwt.GenerateRefreshToken(strconv.Itoa(int(user.Uid)), time.Hour*24*30)
 	c.JSON(200, gin.H{"accessToken": accessToken, "refreshToken": refreshToken})
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lukkytung/gokit/example/router"
 	"github.com/lukkytung/gokit/pkg/config"
 	"github.com/lukkytung/gokit/pkg/database"
 	"github.com/lukkytung/gokit/pkg/logger"
@@ -30,11 +31,14 @@ func main() {
 	// 初始化 Redis
 	redis.InitRedis()
 
-	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Hello, World!"})
 	})
-	router.Run(":" + config.AppConfig.ServerPort)
+
+	router.InitRouter(r)
+
+	r.Run(":" + config.AppConfig.ServerPort)
 
 	// 示例输出
 	fmt.Println("Application started successfully")

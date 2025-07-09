@@ -25,13 +25,13 @@ func getSecretKey() ([]byte, error) {
 	return []byte(secretKey), nil
 }
 
-func GenerateTokens(userID string) (accessToken, refreshToken, jti string, err error) {
+func GenerateTokens(uid string) (accessToken, refreshToken, jti string, err error) {
 	jti, err = utils.GenerateIDStr()
 	if err != nil {
 		return
 	}
 	accessClaims := Claims{
-		Uid: userID,
+		Uid: uid,
 		JTI: jti,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
@@ -50,7 +50,7 @@ func GenerateTokens(userID string) (accessToken, refreshToken, jti string, err e
 	}
 
 	refreshClaims := Claims{
-		Uid: userID,
+		Uid: uid,
 		JTI: jti,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
@@ -63,7 +63,7 @@ func GenerateTokens(userID string) (accessToken, refreshToken, jti string, err e
 	}
 
 	// 存 JTI 到 Redis
-	redis.Client.Set("refresh_jti:"+jti, userID, 7*24*time.Hour)
+	redis.Client.Set("refresh_jti:"+jti, uid, 7*24*time.Hour)
 	return accessToken, refreshToken, jti, err
 }
 

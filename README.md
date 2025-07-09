@@ -24,7 +24,7 @@ gokit 是一个基于 Go 语言的服务端项目模板，集成了常用的开�
 | REDIS_DB            | Redis 数据库编号       | 0                     |
 | EMAIL_FROM          | Email发送账号          | XXXXXXXXXX@163.com    |
 | EMAIL_SMTP_HOST     | 邮箱服务器             | smtp.163.com           |
-| EMAIL_USER          | 发送者名称              | Gokit                 |
+| EMAIL_USER          | 发送者名称              | XXXXXXXXXX@163.com     |
 | EMAIL_PASS          | 邮箱发送密码             | abc123456dxs           |
 | EMAIL_SMTP_PORT     | 邮箱发送端口              |465                    | 
 | JWT_SECRET_KEY      | jwt安全键                |jwt_sc_key          |
@@ -49,14 +49,22 @@ gokit 是一个基于 Go 语言的服务端项目模板，集成了常用的开�
    ```bash
    go mod tidy
    ```
+4. **初始化gokit**
+   ```
+   // 初始化Gokit
+	cmd.InitGokit()
 
-4. **运行项目**
+	// 自动迁移数据库
+	service.DB.AutoMigrate(&model.User{})
+   ```
+
+5. **运行项目**
 
    ```bash
    go run main.go
    ```
 
-5. **访问服务**
+6. **访问服务**
 
    默认服务运行在 `http://localhost:8080`，可通过 `.env` 文件中的 `SERVER_PORT` 配置进行调整。
 

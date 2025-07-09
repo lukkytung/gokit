@@ -1,13 +1,11 @@
 package redis
 
 import (
-	"context"
 	"log"
 	"strconv"
 
+	"github.com/go-redis/redis"
 	"github.com/lukkytung/gokit/pkg/config"
-
-	"github.com/go-redis/redis/v8"
 )
 
 // Redis 客户端全局实例
@@ -28,7 +26,7 @@ func InitRedis() {
 	})
 
 	// 测试 Redis 连接
-	if _, err := Client.Ping(context.Background()).Result(); err != nil {
+	if _, err := Client.Ping().Result(); err != nil {
 		log.Fatalf("Failed to connect to Redis: %v", err)
 	}
 	log.Println("Redis connected successfully")

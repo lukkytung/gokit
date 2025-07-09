@@ -4,8 +4,7 @@ import (
 	"log"
 
 	"github.com/lukkytung/gokit/pkg/config"
-	"github.com/lukkytung/gokit/pkg/database"
-	"github.com/lukkytung/gokit/pkg/redis"
+	"github.com/lukkytung/gokit/pkg/service"
 	"github.com/lukkytung/gokit/pkg/utils"
 )
 
@@ -21,10 +20,10 @@ func InitGokit() {
 	}
 
 	// 初始化数据库连接
-	if err := database.InitPostgres(); err != nil {
+	if err := service.InitPostgres(); err != nil {
 		log.Fatal("Error connecting to database")
 	}
 
 	// 初始化 Redis
-	redis.InitRedis()
+	service.InitRedis()
 }

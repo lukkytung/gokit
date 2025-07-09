@@ -8,7 +8,7 @@ import (
 	"github.com/lukkytung/gokit/example/router"
 	"github.com/lukkytung/gokit/pkg/cmd"
 	"github.com/lukkytung/gokit/pkg/config"
-	"github.com/lukkytung/gokit/pkg/database"
+	"github.com/lukkytung/gokit/pkg/service"
 )
 
 func main() {
@@ -16,8 +16,9 @@ func main() {
 	cmd.InitGokit()
 
 	// 自动迁移数据库
-	database.DB.AutoMigrate(&model.User{})
+	service.DB.AutoMigrate(&model.User{})
 
+	// 初始化 Gin
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Hello, Gokit!"})

@@ -8,9 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lukkytung/gokit/example/model"
-	"github.com/lukkytung/gokit/pkg/database"
 	"github.com/lukkytung/gokit/pkg/jwt"
-	"github.com/lukkytung/gokit/pkg/redis"
+	"github.com/lukkytung/gokit/pkg/service"
 	"github.com/lukkytung/gokit/pkg/utils"
 )
 
@@ -48,7 +47,7 @@ func SendCode(c *gin.Context) {
 	// 生成 6 位随机验证码
 	code := fmt.Sprintf("%06d", rand.Intn(1000000))
 	// 将验证码存入 Redis，有效期 10 分钟
-	err := redis.Client.Set("code:"+req.Email, code, time.Minute*10).Err()
+	err := service.RedisClient.Set("code:"+req.Email, code, time.Minute*10).Err()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, CustomResponse{
 			Code:    http.StatusInternalServerError,
@@ -78,7 +77,7 @@ func SendCode(c *gin.Context) {
 
 func LoginWithCode(c *gin.Context) {
 
-	db := database.DB
+	db := service.DB
 
 	var req LoginRequest
 	// 解析请求体
@@ -92,7 +91,7 @@ func LoginWithCode(c *gin.Context) {
 	}
 
 	// 校验 Redis 中的验证码
-	val, err := redis.Client.Get("code:" + req.Email).Result()
+	val, err := service.RedisClient.Get("code:" + req.Email).Result()
 	if err != nil || val != req.Code {
 		c.JSON(http.StatusBadRequest, CustomResponse{
 			Code:    http.StatusBadRequest,
@@ -140,7 +139,8 @@ func RefreshToken(c *gin.Context) {
 	}
 
 	jtiKey := "refresh_jti:" + claims.JTI
-	_, err = redis.Client.Get(jtiKey).Result()
+	// 检查 JTI 是否存在
+	_, err = service.RedisClient.Get(jtiKey).Result()
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, CustomResponse{
 			Code:    http.StatusUnauthorized,
@@ -162,7 +162,7 @@ func LogoutHandler(c *gin.Context) {
 	jti := c.GetString("jti")
 
 	// 删除 Redis 中对应的 refresh_jti
-	redis.Client.Del("refresh_jti:" + jti)
+	service.RedisClient.Del("refresh_jti:" + jti)
 
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,

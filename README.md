@@ -51,7 +51,7 @@ gokit 是一个基于 Go 语言的服务端项目模板，集成了常用的开�
    ```
 4. **初始化gokit**
    ```go
-   // 初始化Gokit
+    // 初始化Gokit
 	cmd.InitGokit()
 	// 自动迁移数据库
 	service.DB.AutoMigrate(&model.User{})

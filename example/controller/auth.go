@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -62,7 +64,19 @@ func SendCode(c *gin.Context) {
 	}
 
 	// 发送邮件（忽略发送失败）
-	err = utils.SendEmail(req.Email, "Your Login Code", "Your code is: "+code)
+	// 渲染 HTML 模板
+	tmpl := template.Must(template.ParseFiles("templates/verify.html"))
+	var buf bytes.Buffer
+
+	if err := tmpl.Execute(&buf, gin.H{"code": code}); err != nil {
+		c.JSON(http.StatusInternalServerError, CustomResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Template rendering failed",
+			Data:    err.Error(),
+		})
+		return
+	}
+	err = utils.SendEmailWithTemplate(req.Email, "Your Login Code", buf.String())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, CustomResponse{
 			Code:    http.StatusInternalServerError,

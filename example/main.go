@@ -26,6 +26,9 @@ func main() {
 
 	router.InitRouter(r)
 
+	// 加载 templates 目录下的 HTML 文件
+	r.LoadHTMLGlob("templates/*")
+
 	r.Run(":" + config.AppConfig.ServerPort)
 
 }

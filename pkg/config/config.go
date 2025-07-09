@@ -23,7 +23,7 @@ type Config struct {
 	JwtSecretKey     string
 	EmailSmtpHost    string
 	EmailUser        string
-	EmailPass        string
+	EmailPassword    string
 	EmailFrom        string
 	EmailSmtpPort    string
 }
@@ -54,7 +54,7 @@ func InitConfig() error {
 	viper.BindEnv("JwtSecretKey", "JWT_SECRET_KEY")
 	viper.BindEnv("EmailSmtpHost", "EMAIL_SMTP_HOST")
 	viper.BindEnv("EmailUser", "EMAIL_USER")
-	viper.BindEnv("EmailPass", "EMAIL_PASS")
+	viper.BindEnv("EmailPassword", "EMAIL_PASSWORD")
 	viper.BindEnv("EmailFrom", "EMAIL_FROM")
 	viper.BindEnv("EmailSmtpPort", "EMAIL_SMTP_PORT")
 

@@ -17,7 +17,7 @@ func SendEmailWithTemplate(to string, subject string, body string) error {
 	// 检查环境变量
 	host := dbConfig.EmailSmtpHost
 	user := dbConfig.EmailUser
-	pass := dbConfig.EmailPass
+	pass := dbConfig.EmailPassword
 	from := dbConfig.EmailFrom
 	portStr := dbConfig.EmailSmtpPort
 
@@ -28,7 +28,7 @@ func SendEmailWithTemplate(to string, subject string, body string) error {
 		return fmt.Errorf("环境变量 EMAIL_USER 未设置")
 	}
 	if pass == "" {
-		return fmt.Errorf("环境变量 EMAIL_PASS 未设置")
+		return fmt.Errorf("环境变量 EMAIL_PASSWORD 未设置")
 	}
 	if from == "" {
 		return fmt.Errorf("环境变量 EMAIL_FROM 未设置")
@@ -71,7 +71,7 @@ func SendEmail(to string, subject string, body string) error {
 	// 检查环境变量
 	host := dbConfig.EmailSmtpHost
 	user := dbConfig.EmailUser
-	pass := dbConfig.EmailPass
+	pass := dbConfig.EmailPassword
 	from := dbConfig.EmailFrom
 	portStr := dbConfig.EmailSmtpPort
 
@@ -82,7 +82,7 @@ func SendEmail(to string, subject string, body string) error {
 		return fmt.Errorf("环境变量 EMAIL_USER 未设置")
 	}
 	if pass == "" {
-		return fmt.Errorf("环境变量 EMAIL_PASS 未设置")
+		return fmt.Errorf("环境变量 EMAIL_PASSWORD 未设置")
 	}
 	if from == "" {
 		return fmt.Errorf("环境变量 EMAIL_FROM 未设置")

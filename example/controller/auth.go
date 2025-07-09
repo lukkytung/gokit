@@ -30,6 +30,10 @@ type LoginRequest struct {
 	Code  string `json:"code"`
 }
 
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
 func SendCode(c *gin.Context) {
 	var req SendEmailRequest
 	// 解析请求体中的 email
@@ -107,11 +111,50 @@ func LoginWithCode(c *gin.Context) {
 	}
 
 	// 生成 JWT token
-	accessToken, _ := jwt.GenerateAccessToken(strconv.Itoa(int(user.Uid)), time.Minute*15)
-	refreshToken, _ := jwt.GenerateRefreshToken(strconv.Itoa(int(user.Uid)), time.Hour*24*30)
+	at, rt, jti, _ := jwt.GenerateTokens(strconv.Itoa(int(user.Uid)), time.Minute*15, time.Hour*24*30)
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,
 		Message: "Login successful",
-		Data:    gin.H{"accessToken": accessToken, "refreshToken": refreshToken},
+		Data:    gin.H{"accessToken": at, "refreshToken": rt, "jti": jti},
+	})
+}
+
+func RefreshToken(c *gin.Context) {
+	var req RefreshTokenRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, CustomResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid input",
+			Data:    nil,
+		})
+		return
+	}
+
+	claims, err := jwt.ParseToken(req.RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, CustomResponse{
+			Code:    http.StatusUnauthorized,
+			Message: "Invalid refresh token",
+			Data:    nil,
+		})
+		return
+	}
+
+	jtiKey := "refresh_jti:" + claims.JTI
+	_, err = redis.Client.Get(jtiKey).Result()
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, CustomResponse{
+			Code:    http.StatusUnauthorized,
+			Message: "Refresh token expired",
+			Data:    nil,
+		})
+		return
+	}
+
+	at, rt, newJTI, _ := jwt.GenerateTokens(claims.Uid, time.Minute*15, time.Hour*24*30)
+	c.JSON(http.StatusOK, CustomResponse{
+		Code:    http.StatusOK,
+		Message: "Refresh token successful",
+		Data:    gin.H{"access_token": at, "refresh_token": rt, "jti": newJTI},
 	})
 }

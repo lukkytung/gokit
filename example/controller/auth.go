@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,9 +15,9 @@ import (
 )
 
 type CustomResponse struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    any    `json:"data"`
 }
 
 type SendEmailRequest struct {
@@ -111,7 +110,7 @@ func LoginWithCode(c *gin.Context) {
 	}
 
 	// 生成 JWT token
-	at, rt, jti, _ := jwt.GenerateTokens(strconv.Itoa(int(user.Uid)), time.Minute*15, time.Hour*24*30)
+	at, rt, jti, _ := jwt.GenerateTokens(user.Uid, time.Minute*15, time.Hour*24*30)
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,
 		Message: "Login successful",
@@ -156,5 +155,18 @@ func RefreshToken(c *gin.Context) {
 		Code:    http.StatusOK,
 		Message: "Refresh token successful",
 		Data:    gin.H{"access_token": at, "refresh_token": rt, "jti": newJTI},
+	})
+}
+
+func LogoutHandler(c *gin.Context) {
+	jti := c.GetString("jti")
+
+	// 删除 Redis 中对应的 refresh_jti
+	redis.Client.Del("refresh_jti:" + jti)
+
+	c.JSON(http.StatusOK, CustomResponse{
+		Code:    http.StatusOK,
+		Message: "Logged out successfully",
+		Data:    nil,
 	})
 }

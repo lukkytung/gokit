@@ -26,7 +26,7 @@ func getSecretKey() ([]byte, error) {
 }
 
 func GenerateTokens(uid string, accessDuration time.Duration, refreshDuration time.Duration) (accessToken, refreshToken, jti string, err error) {
-	jti, err = utils.GenerateIDStr()
+	jti, err = utils.GenerateID()
 	if err != nil {
 		return
 	}
@@ -73,52 +73,6 @@ func GenerateTokens(uid string, accessDuration time.Duration, refreshDuration ti
 	// 存 JTI 到 Redis
 	redis.Client.Set("refresh_jti:"+jti, uid, refreshDuration)
 	return accessToken, refreshToken, jti, err
-}
-
-// 生成access token
-func GenerateAccessToken(uid string, duration time.Duration) (string, error) {
-	if duration == 0 {
-		duration = 15 * time.Minute
-	}
-	secretKey, err := getSecretKey()
-	if err != nil {
-		log.Println("Failed to get secret key:", err)
-		return "", err
-	}
-	claims := jwt.MapClaims{
-		"uid": uid,
-		"exp": time.Now().Add(duration).Unix(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenStr, err := token.SignedString(secretKey)
-	if err != nil {
-		log.Println("Failed to create token:", err)
-		return "", err
-	}
-	return tokenStr, nil
-}
-
-// 生成refresh token
-func GenerateRefreshToken(uid string, duration time.Duration) (string, error) {
-	if duration == 0 {
-		duration = 7 * 24 * time.Hour
-	}
-	secretKey, err := getSecretKey()
-	if err != nil {
-		log.Println("Failed to get secret key:", err)
-		return "", err
-	}
-	claims := jwt.MapClaims{
-		"uid": uid,
-		"exp": time.Now().Add(duration).Unix(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenStr, err := token.SignedString(secretKey)
-	if err != nil {
-		log.Println("Failed to create token:", err)
-		return "", err
-	}
-	return tokenStr, nil
 }
 
 // ParseToken 解析 JWT 令牌并返回用户信息

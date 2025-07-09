@@ -9,7 +9,7 @@ import (
 
 type User struct {
 	gorm.Model
-	Uid   uint   `gorm:"unique"`
+	Uid   string `gorm:"unique"`
 	Email string `gorm:"unique"`
 }
 

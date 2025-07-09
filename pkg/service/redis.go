@@ -12,7 +12,7 @@ import (
 var RedisClient *redis.Client
 
 // InitRedis 初始化 Redis 客户端
-func InitRedis() {
+func InitRedis() error {
 
 	redisConfig := config.AppConfig
 	addr := redisConfig.RedisHost + ":" + strconv.Itoa(redisConfig.RedisPort)
@@ -28,6 +28,8 @@ func InitRedis() {
 	// 测试 Redis 连接
 	if _, err := RedisClient.Ping().Result(); err != nil {
 		log.Fatalf("Failed to connect to Redis: %v", err)
+		return err
 	}
 	log.Println("Redis connected successfully")
+	return nil
 }

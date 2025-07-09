@@ -11,13 +11,13 @@ import (
 // InitGokit 初始化 Gokit
 func InitGokit() {
 
-	// 初始化sonyflake
-	utils.InitIDGenerator()
-
 	// 初始化配置
 	if err := config.InitConfig(); err != nil {
 		log.Fatal("Error loading config")
 	}
+
+	// 初始化sonyflake
+	utils.InitIDGenerator()
 
 	// 初始化数据库连接
 	if err := service.InitPostgres(); err != nil {
@@ -25,5 +25,7 @@ func InitGokit() {
 	}
 
 	// 初始化 Redis
-	service.InitRedis()
+	if err := service.InitRedis(); err != nil {
+		log.Fatal("Error connecting to Redis")
+	}
 }

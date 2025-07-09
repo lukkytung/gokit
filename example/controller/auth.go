@@ -29,6 +29,13 @@ type LoginRequest struct {
 	Code  string `json:"code"`
 }
 
+type UserResponse struct {
+	Uid       string    `json:"uid"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 func SendCode(c *gin.Context) {
 	var req SendEmailRequest
 	// 解析请求体中的 email
@@ -101,8 +108,16 @@ func LoginWithCode(c *gin.Context) {
 	// 查找用户，不存在则自动注册
 	var user model.User
 	if err := db.Where("email = ?", req.Email).First(&user).Error; err != nil {
+		// 用户不存在,创建新用户
 		user = model.User{Email: req.Email}
-		db.Create(&user)
+		if err := db.Create(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, CustomResponse{
+				Code:    http.StatusInternalServerError,
+				Message: "Failed to create user",
+				Data:    err.Error(),
+			})
+			return
+		}
 	}
 
 	// 生成 JWT token
@@ -118,7 +133,7 @@ func LoginWithCode(c *gin.Context) {
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,
 		Message: "Login successful",
-		Data:    gin.H{"accessToken": at, "refreshToken": rt},
+		Data:    gin.H{"accessToken": at, "refreshToken": rt, "user": UserResponse{Uid: user.Uid, Email: user.Email, CreatedAt: user.CreatedAt, UpdatedAt: user.UpdatedAt}},
 	})
 }
 
@@ -154,7 +169,7 @@ func RefreshToken(c *gin.Context) {
 		})
 		return
 	}
-
+	// 生成新的 token
 	at, rt, _, err := jwt.GenerateTokens(claims.Uid, time.Minute*15, time.Hour*24*30)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, CustomResponse{
@@ -164,6 +179,8 @@ func RefreshToken(c *gin.Context) {
 		})
 		return
 	}
+
+	// 返回新的 token
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,
 		Message: "Refresh token successful",

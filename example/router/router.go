@@ -8,4 +8,6 @@ import (
 func InitRouter(r *gin.Engine) {
 	r.POST("/send-code", controller.SendCode)
 	r.POST("/login", controller.LoginWithCode)
+	r.POST("/refresh-token", controller.RefreshToken)
+	r.POST("/logout", controller.LogoutHandler)
 }

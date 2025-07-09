@@ -109,11 +109,19 @@ func LoginWithCode(c *gin.Context) {
 	}
 
 	// 生成 JWT token
-	at, rt, jti, _ := jwt.GenerateTokens(user.Uid, time.Minute*15, time.Hour*24*30)
+	at, rt, _, err := jwt.GenerateTokens(user.Uid, time.Minute*15, time.Hour*24*30)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, CustomResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Failed to generate tokens",
+			Data:    err.Error(),
+		})
+		return
+	}
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,
 		Message: "Login successful",
-		Data:    gin.H{"accessToken": at, "refreshToken": rt, "jti": jti},
+		Data:    gin.H{"accessToken": at, "refreshToken": rt},
 	})
 }
 

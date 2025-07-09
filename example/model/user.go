@@ -13,6 +13,7 @@ type User struct {
 	Email string `gorm:"unique"`
 }
 
+// BeforeCreate 创建用户时生成唯一 ID
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	uid, err := utils.GenerateID()
 	if err != nil {

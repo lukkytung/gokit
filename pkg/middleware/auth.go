@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lukkytung/gokit/pkg/jwt"
+	"github.com/lukkytung/gokit/pkg/redis"
 )
 
 // AuthMiddleware JWT 鉴权中间件
@@ -32,6 +33,34 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Set("uid", claims.Uid)
 		log.Fatalf("Authenticated user: %s", claims.Uid)
 
+		c.Next()
+	}
+}
+
+func JWTAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenStr := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
+		if tokenStr == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
+			return
+		}
+
+		claims, err := jwt.ParseToken(tokenStr)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			return
+		}
+
+		// 校验是否被拉黑
+		jtiKey := "refresh_jti:" + claims.JTI
+		_, err = redis.Client.Get(jtiKey).Result()
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token revoked"})
+			return
+		}
+
+		c.Set("user_id", claims.Uid)
+		c.Set("jti", claims.JTI)
 		c.Next()
 	}
 }

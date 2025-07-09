@@ -9,6 +9,7 @@ import (
 	"github.com/lukkytung/gokit/pkg/utils"
 )
 
+// InitGokit 初始化 Gokit
 func InitGokit() {
 
 	// 初始化sonyflake

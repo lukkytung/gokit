@@ -24,7 +24,7 @@ gokit 是一个基于 Go 语言的服务端项目模板，集成了常用的开�
 | REDIS_DB            | Redis 数据库编号       | 0                     |
 | EMAIL_FROM          | Email发送账号          | XXXXXXXXXX@163.com    |
 | EMAIL_SMTP_HOST     | 邮箱服务器             | smtp.163.com           |
-| EMAIL_USER          | 发送者名称              | Mocoo                 |
+| EMAIL_USER          | 发送者名称              | Gokit                 |
 | EMAIL_PASS          | 邮箱发送密码             | abc123456dxs           |
 | EMAIL_SMTP_PORT     | 邮箱发送端口              |465                    | 
 | JWT_SECRET_KEY      | jwt安全键                |jwt_sc_key          |

@@ -9,6 +9,8 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+// SendEmailWithTemplate 使用环境变量中的 SMTP 配置发送邮件
+// to: 收件人邮箱，subject: 邮件主题，body: 邮件内容
 func SendEmailWithTemplate(to string, subject string, body string) error {
 	dbConfig := config.AppConfig
 

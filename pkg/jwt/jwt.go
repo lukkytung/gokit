@@ -114,20 +114,12 @@ func GenerateRefreshToken(uid string, duration time.Duration) (string, error) {
 }
 
 // ParseToken 解析 JWT 令牌并返回用户信息
-func ParseToken(tokenStr string) (jwt.MapClaims, error) {
-	secretKey, err := getSecretKey()
-	if err != nil {
-		log.Println("Failed to get secret key:", err)
-		return nil, err
-	}
-	token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
-		return secretKey, nil
+func ParseToken(tokenStr string) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return getSecretKey()
 	})
 	if err != nil {
 		return nil, err
 	}
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return claims, nil
-	}
-	return nil, jwt.ErrSignatureInvalid
+	return token.Claims.(*Claims), nil
 }

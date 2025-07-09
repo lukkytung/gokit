@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// 初始化Gokit
-	cmd.Init()
+	cmd.InitGokit()
 
 	// 自动迁移数据库
 	database.DB.AutoMigrate(&model.User{})

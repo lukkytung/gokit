@@ -9,7 +9,7 @@ import (
 	"github.com/lukkytung/gokit/pkg/utils"
 )
 
-func Init() {
+func InitGokit() {
 
 	// 初始化sonyflake
 	utils.InitIDGenerator()

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -67,7 +66,7 @@ func InitConfig() error {
 	}
 
 	// 打印加载的配置，便于调试
-	fmt.Printf("Loaded config: %+v\n", AppConfig)
+	log.Printf("Loaded config: %+v\n", AppConfig)
 
 	return nil
 }

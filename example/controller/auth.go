@@ -150,11 +150,19 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 
-	at, rt, newJTI, _ := jwt.GenerateTokens(claims.Uid, time.Minute*15, time.Hour*24*30)
+	at, rt, _, err := jwt.GenerateTokens(claims.Uid, time.Minute*15, time.Hour*24*30)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, CustomResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Failed to generate tokens",
+			Data:    err.Error(),
+		})
+		return
+	}
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,
 		Message: "Refresh token successful",
-		Data:    gin.H{"access_token": at, "refresh_token": rt, "jti": newJTI},
+		Data:    gin.H{"access_token": at, "refresh_token": rt},
 	})
 }
 

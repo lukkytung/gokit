@@ -26,6 +26,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 
 		// 校验是否被拉黑
 		jtiKey := "refresh_jti:" + claims.JTI
+		// 如果 JTI 不存在，则认为 token 已过期，需要重新登录
 		_, err = service.RedisClient.Get(jtiKey).Result()
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token revoked"})

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -28,10 +29,6 @@ type LoginRequest struct {
 	Code  string `json:"code"`
 }
 
-type RefreshTokenRequest struct {
-	RefreshToken string `json:"refresh_token"`
-}
-
 func SendCode(c *gin.Context) {
 	var req SendEmailRequest
 	// 解析请求体中的 email
@@ -39,7 +36,7 @@ func SendCode(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, CustomResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Invalid email",
-			Data:    nil,
+			Data:    err.Error(),
 		})
 		return
 	}
@@ -126,17 +123,17 @@ func LoginWithCode(c *gin.Context) {
 }
 
 func RefreshToken(c *gin.Context) {
-	var req RefreshTokenRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	refreshToken := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
+	if refreshToken == "" {
 		c.JSON(http.StatusBadRequest, CustomResponse{
 			Code:    http.StatusBadRequest,
-			Message: "Invalid input",
+			Message: "Missing refresh token",
 			Data:    nil,
 		})
 		return
 	}
 
-	claims, err := jwt.ParseToken(req.RefreshToken)
+	claims, err := jwt.ParseToken(refreshToken)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, CustomResponse{
 			Code:    http.StatusUnauthorized,

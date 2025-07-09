@@ -2,6 +2,7 @@ package utils
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/sony/sonyflake"
 )
@@ -21,4 +22,11 @@ func GenerateID() (uint, error) {
 		return 0, err
 	}
 	return uint(id), nil
+}
+func GenerateIDStr() (string, error) {
+	id, err := sf.NextID()
+	if err != nil {
+		return "", err
+	}
+	return strconv.Itoa(int(id)), nil
 }

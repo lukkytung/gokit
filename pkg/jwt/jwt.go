@@ -6,7 +6,15 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/lukkytung/gokit/pkg/redis"
+	"github.com/lukkytung/gokit/pkg/utils"
 )
+
+type Claims struct {
+	Uid string `json:"uid"`
+	JTI string `json:"jti"`
+	jwt.RegisteredClaims
+}
 
 // 获取 JWT 密钥
 func getSecretKey() ([]byte, error) {
@@ -15,6 +23,48 @@ func getSecretKey() ([]byte, error) {
 		return nil, jwt.ErrSignatureInvalid
 	}
 	return []byte(secretKey), nil
+}
+
+func GenerateTokens(userID string) (accessToken, refreshToken, jti string, err error) {
+	jti, err = utils.GenerateIDStr()
+	if err != nil {
+		return
+	}
+	accessClaims := Claims{
+		Uid: userID,
+		JTI: jti,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
+		},
+	}
+
+	secretKey, err := getSecretKey()
+	if err != nil {
+		log.Println("Failed to get secret key:", err)
+		return "", "", "", err
+	}
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
+	accessToken, err = at.SignedString(secretKey)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	refreshClaims := Claims{
+		Uid: userID,
+		JTI: jti,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
+		},
+	}
+	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
+	refreshToken, err = rt.SignedString(secretKey)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	// 存 JTI 到 Redis
+	redis.Client.Set("refresh_jti:"+jti, userID, 7*24*time.Hour)
+	return accessToken, refreshToken, jti, err
 }
 
 // 生成access token

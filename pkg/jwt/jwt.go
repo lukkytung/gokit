@@ -70,7 +70,7 @@ func GenerateTokens(uid string, accessDuration time.Duration, refreshDuration ti
 		return "", "", "", err
 	}
 
-	// 存 JTI 到 Redis
+	// 存 JTI 到 Redis，用于刷新 token 时校验，超时后自动删除，需要重新登录
 	redis.Client.Set("refresh_jti:"+jti, uid, refreshDuration)
 	return accessToken, refreshToken, jti, err
 }

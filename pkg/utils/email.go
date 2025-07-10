@@ -2,7 +2,7 @@
 package utils
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/lukkytung/gokit/pkg/config"
@@ -22,16 +22,20 @@ func SendEmailWithTemplate(to string, subject string, body string) error {
 	portStr := dbConfig.EmailSmtpPort
 
 	if host == "" {
-		return fmt.Errorf("环境变量 EMAIL_SMTP_HOST 未设置")
+		log.Printf("环境变量 EMAIL_SMTP_HOST 未设置")
+		return nil
 	}
 	if user == "" {
-		return fmt.Errorf("环境变量 EMAIL_USER 未设置")
+		log.Printf("环境变量 EMAIL_USER 未设置")
+		return nil
 	}
 	if pass == "" {
-		return fmt.Errorf("环境变量 EMAIL_PASSWORD 未设置")
+		log.Printf("环境变量 EMAIL_PASSWORD 未设置")
+		return nil
 	}
 	if from == "" {
-		return fmt.Errorf("环境变量 EMAIL_FROM 未设置")
+		log.Printf("环境变量 EMAIL_FROM 未设置")
+		return nil
 	}
 
 	// 解析 SMTP 端口，默认 465
@@ -39,7 +43,8 @@ func SendEmailWithTemplate(to string, subject string, body string) error {
 	if portStr != "" {
 		p, err := strconv.Atoi(portStr)
 		if err != nil {
-			return fmt.Errorf("环境变量 EMAIL_SMTP_PORT 解析失败: %v", err)
+			log.Printf("环境变量 EMAIL_SMTP_PORT 解析失败: %v", err)
+			return err
 		}
 		port = p
 	}
@@ -76,16 +81,19 @@ func SendEmail(to string, subject string, body string) error {
 	portStr := dbConfig.EmailSmtpPort
 
 	if host == "" {
-		return fmt.Errorf("环境变量 EMAIL_SMTP_HOST 未设置")
+		log.Printf("环境变量 EMAIL_SMTP_HOST 未设置")
+		return nil
 	}
 	if user == "" {
-		return fmt.Errorf("环境变量 EMAIL_USER 未设置")
+		log.Printf("环境变量 EMAIL_USER 未设置")
 	}
 	if pass == "" {
-		return fmt.Errorf("环境变量 EMAIL_PASSWORD 未设置")
+		log.Printf("环境变量 EMAIL_PASSWORD 未设置")
+		return nil
 	}
 	if from == "" {
-		return fmt.Errorf("环境变量 EMAIL_FROM 未设置")
+		log.Printf("环境变量 EMAIL_FROM 未设置")
+		return nil
 	}
 
 	// 解析 SMTP 端口，默认 465
@@ -93,7 +101,8 @@ func SendEmail(to string, subject string, body string) error {
 	if portStr != "" {
 		p, err := strconv.Atoi(portStr)
 		if err != nil {
-			return fmt.Errorf("环境变量 EMAIL_SMTP_PORT 解析失败: %v", err)
+			log.Printf("环境变量 EMAIL_SMTP_PORT 解析失败: %v", err)
+			return err
 		}
 		port = p
 	}

@@ -19,6 +19,7 @@ func InitIDGenerator() {
 func GenerateID() (string, error) {
 	id, err := sf.NextID()
 	if err != nil {
+		log.Printf("failed to generate ID: %v", err)
 		return "", err
 	}
 	return strconv.Itoa(int(id)), nil

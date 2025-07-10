@@ -11,6 +11,9 @@ import (
 // InitGokit 初始化 Gokit
 func InitGokit() {
 
+	log.SetPrefix("[Gokit] ")
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	// 初始化配置
 	if err := config.InitConfig(); err != nil {
 		log.Fatal("Error loading config")

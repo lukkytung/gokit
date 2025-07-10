@@ -20,6 +20,7 @@ func main() {
 
 	// 初始化 Gin
 	r := gin.Default()
+	gin.SetMode(gin.DebugMode)
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Hello, Gokit!"})
 	})

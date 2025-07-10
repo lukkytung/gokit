@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"os"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -33,9 +34,29 @@ var AppConfig Config
 
 // InitConfig 加载配置文件
 func InitConfig() error {
-	// 只加载 .env 文件（如果存在）
-	_ = godotenv.Load()
+	// 获取当前的环境（默认开发环境）
+	env := os.Getenv("GO_ENV")
+	if env == "" {
+		env = "development" // 默认为开发环境
+	}
 
+	// 根据环境加载相应的 .env 文件
+	var envFile string
+	switch env {
+	case "production":
+		envFile = ".env.production"
+	case "staging":
+		envFile = ".env.staging"
+	default:
+		envFile = ".env" // 默认加载开发环境的配置
+	}
+
+	// 加载 .env 文件
+	err := godotenv.Load(envFile)
+	if err != nil {
+		log.Fatalf("Error loading .env file, %s", err)
+		return err
+	}
 	// 支持从环境变量读取配置
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
@@ -59,7 +80,7 @@ func InitConfig() error {
 	viper.BindEnv("EmailSmtpPort", "EMAIL_SMTP_PORT")
 
 	// 反序列化环境变量到 Config 结构体
-	err := viper.Unmarshal(&AppConfig)
+	err = viper.Unmarshal(&AppConfig)
 	if err != nil {
 		log.Fatalf("unable to decode into struct, %v", err)
 		return err

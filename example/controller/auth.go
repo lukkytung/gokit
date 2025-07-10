@@ -147,7 +147,13 @@ func LoginWithCode(c *gin.Context) {
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,
 		Message: "Login successful",
-		Data:    gin.H{"accessToken": at, "refreshToken": rt, "user": UserResponse{Uid: user.Uid, Email: user.Email, CreatedAt: user.CreatedAt, UpdatedAt: user.UpdatedAt}},
+		Data: gin.H{"accessToken": at,
+			"refreshToken": rt,
+			"user": UserResponse{Uid: user.Uid,
+				Email:     user.Email,
+				CreatedAt: user.CreatedAt,
+				UpdatedAt: user.UpdatedAt,
+			}},
 	})
 }
 

@@ -45,9 +45,12 @@ func InitConfig() error {
 	switch env {
 	case "production":
 		envFile = ".env.production"
+		log.Printf("Loading production environment")
 	case "staging":
 		envFile = ".env.staging"
+		log.Printf("Loading staging environment")
 	default:
+		log.Printf("Loading development environment")
 		envFile = ".env" // 默认加载开发环境的配置
 	}
 

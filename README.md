@@ -33,7 +33,6 @@ gokit 是一个基于 Go 语言的服务端项目模板，集成了常用的开�
 | EMAIL_SMTP_PORT     | 邮箱发送端口              |465                    | 
 | JWT_SECRET_KEY      | jwt安全键                |jwt_sc_key          |
 
-> 请参考项目根目录下的 `.env` 文件示例，填写正确的数据库和 Redis 连接信息。
 
 ## 使用方法
 

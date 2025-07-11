@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/lukkytung/gokit/pkg/utils"
 	"gorm.io/gorm"
@@ -9,8 +10,11 @@ import (
 
 type User struct {
 	gorm.Model
-	Uid   string `gorm:"unique"`
-	Email string `gorm:"unique"`
+	Uid      string `gorm:"unique"`
+	Email    string `gorm:"unique"`
+	Avatar   string
+	Gender   string
+	Birthday time.Time
 }
 
 // BeforeCreate 创建用户时生成唯一 ID

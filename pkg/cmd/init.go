@@ -9,7 +9,7 @@ import (
 )
 
 // InitGokit 初始化 Gokit
-func InitGokit() {
+func InitGokitWithModels(dsk ...interface{}) {
 
 	log.SetPrefix("[Gokit] ")
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -26,6 +26,9 @@ func InitGokit() {
 	if err := service.InitPostgres(); err != nil {
 		log.Fatal("Error connecting to database")
 	}
+
+	// 自动迁移数据库
+	service.DB.AutoMigrate(dsk...)
 
 	// 初始化 Redis
 	if err := service.InitRedis(); err != nil {

@@ -8,15 +8,11 @@ import (
 	"github.com/lukkytung/gokit/example/router"
 	"github.com/lukkytung/gokit/pkg/cmd"
 	"github.com/lukkytung/gokit/pkg/config"
-	"github.com/lukkytung/gokit/pkg/service"
 )
 
 func main() {
 	// 初始化Gokit
-	cmd.InitGokit()
-
-	// 自动迁移数据库
-	service.DB.AutoMigrate(&model.User{})
+	cmd.InitGokitWithModels(&model.User{})
 
 	// 初始化 Gin
 	r := gin.Default()

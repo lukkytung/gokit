@@ -1,4 +1,4 @@
-package cmd
+package gokit
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 )
 
 // InitGokit 初始化 Gokit
-func InitGokitWithModels(dsk ...interface{}) {
+func InitWithModel(dsk ...interface{}) {
 
 	log.SetPrefix("[Gokit] ")
 	log.SetFlags(log.LstdFlags | log.Lshortfile)

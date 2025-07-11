@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lukkytung/gokit/example/model"
 	"github.com/lukkytung/gokit/example/router"
-	"github.com/lukkytung/gokit/pkg/cmd"
+	gokit "github.com/lukkytung/gokit/pkg/cmd"
 	"github.com/lukkytung/gokit/pkg/config"
 )
 
 func main() {
 	// 初始化Gokit
-	cmd.InitGokitWithModels(&model.User{})
+	gokit.InitWithModel(&model.User{})
 
 	// 初始化 Gin
 	r := gin.Default()

@@ -2,6 +2,12 @@
 package utils
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"encoding/base64"
+	"errors"
+	"io"
 	"log"
 	"strconv"
 
@@ -124,4 +130,58 @@ func SendEmail(to string, subject string, body string) error {
 
 	// 发送邮件
 	return d.DialAndSend(m)
+}
+
+var secretKey = []byte("12345678901234567890123456789012") // 32字节 = AES-256
+
+// 加密邮箱
+func EncryptEmail(email string) (string, error) {
+	block, err := aes.NewCipher(secretKey)
+	if err != nil {
+		return "", err
+	}
+
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
+	nonce := make([]byte, aesGCM.NonceSize())
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+		return "", err
+	}
+
+	cipherText := aesGCM.Seal(nonce, nonce, []byte(email), nil)
+	return base64.StdEncoding.EncodeToString(cipherText), nil
+}
+
+// 解密邮箱
+func DecryptEmail(encrypted string) (string, error) {
+	data, err := base64.StdEncoding.DecodeString(encrypted)
+	if err != nil {
+		return "", err
+	}
+
+	block, err := aes.NewCipher(secretKey)
+	if err != nil {
+		return "", err
+	}
+
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
+	nonceSize := aesGCM.NonceSize()
+	if len(data) < nonceSize {
+		return "", errors.New("ciphertext too short")
+	}
+
+	nonce, cipherText := data[:nonceSize], data[nonceSize:]
+	plainText, err := aesGCM.Open(nil, nonce, cipherText, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(plainText), nil
 }

@@ -118,12 +118,22 @@ func LoginWithCode(c *gin.Context) {
 		})
 		return
 	}
+	// 加密邮箱
+	encryptEmail, err := utils.EncryptEmailDeterministic(req.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, CustomResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Failed to encrypt email",
+			Data:    err.Error(),
+		})
+		return
+	}
 
 	// 查找用户，不存在则自动注册
 	var user model.User
-	if err := db.Where("email = ?", req.Email).First(&user).Error; err != nil {
+	if err := db.Where("email = ?", encryptEmail).First(&user).Error; err != nil {
 		// 用户不存在,创建新用户
-		user = model.User{Email: req.Email}
+		user = model.User{Email: encryptEmail}
 		if err := db.Create(&user).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, CustomResponse{
 				Code:    http.StatusInternalServerError,
@@ -144,13 +154,24 @@ func LoginWithCode(c *gin.Context) {
 		})
 		return
 	}
+	// 获取解密后的邮箱
+	decryptEmail, err := utils.DecryptEmailDeterministic(user.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, CustomResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Failed to decrypt email",
+			Data:    err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, CustomResponse{
 		Code:    http.StatusOK,
 		Message: "Login successful",
 		Data: gin.H{"accessToken": at,
 			"refreshToken": rt,
 			"user": UserResponse{Uid: user.Uid,
-				Email:     user.Email,
+				Email:     decryptEmail,
 				CreatedAt: user.CreatedAt,
 				UpdatedAt: user.UpdatedAt,
 			}},

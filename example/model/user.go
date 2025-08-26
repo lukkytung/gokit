@@ -11,7 +11,7 @@ import (
 type User struct {
 	gorm.Model
 	Uid      string `gorm:"unique"`
-	Email    string `gorm:"unique"`
+	Email    string `gorm:"uniqueIndex"`
 	Avatar   string
 	Gender   string
 	Birthday time.Time

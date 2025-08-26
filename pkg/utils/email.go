@@ -4,10 +4,10 @@ package utils
 import (
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/rand"
 	"encoding/base64"
+	"encoding/hex"
 	"errors"
-	"io"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -132,12 +132,27 @@ func SendEmail(to string, subject string, body string) error {
 	return d.DialAndSend(m)
 }
 
-// 加密邮箱
-func EncryptEmail(email string) (string, error) {
+// 获取 AES Key
+func getAESKey() ([]byte, error) {
+	keyHex := config.AppConfig.EmailEncrypSecretKey
+	key, err := hex.DecodeString(keyHex)
+	if err != nil {
+		return nil, fmt.Errorf("invalid secret key hex: %w", err)
+	}
+	if len(key) != 16 && len(key) != 24 && len(key) != 32 {
+		return nil, fmt.Errorf("invalid AES key length: %d", len(key))
+	}
+	return key, nil
+}
 
-	secretKey := config.AppConfig.EmailEncrypSecretKey
+// EncryptEmailDeterministic 确定性加密
+func EncryptEmailDeterministic(email string) (string, error) {
+	key, err := getAESKey()
+	if err != nil {
+		return "", err
+	}
 
-	block, err := aes.NewCipher([]byte(secretKey))
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
 	}
@@ -147,41 +162,37 @@ func EncryptEmail(email string) (string, error) {
 		return "", err
 	}
 
-	nonce := make([]byte, aesGCM.NonceSize())
-	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
-		return "", err
-	}
-
-	cipherText := aesGCM.Seal(nonce, nonce, []byte(email), nil)
+	nonce := make([]byte, aesGCM.NonceSize()) // 固定 nonce
+	cipherText := aesGCM.Seal(nil, nonce, []byte(email), nil)
 	return base64.StdEncoding.EncodeToString(cipherText), nil
 }
 
-// 解密邮箱
-func DecryptEmail(encrypted string) (string, error) {
+// DecryptEmailDeterministic 解密
+func DecryptEmailDeterministic(encrypted string) (string, error) {
+	key, err := getAESKey()
+	if err != nil {
+		return "", err
+	}
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
 	data, err := base64.StdEncoding.DecodeString(encrypted)
 	if err != nil {
 		return "", err
 	}
-	secretKey := config.AppConfig.EmailEncrypSecretKey
-	block, err := aes.NewCipher([]byte(secretKey))
-	if err != nil {
-		return "", err
-	}
 
-	aesGCM, err := cipher.NewGCM(block)
+	nonce := make([]byte, aesGCM.NonceSize()) // 固定 nonce
+	plainText, err := aesGCM.Open(nil, nonce, data, nil)
 	if err != nil {
-		return "", err
-	}
-
-	nonceSize := aesGCM.NonceSize()
-	if len(data) < nonceSize {
-		return "", errors.New("ciphertext too short")
-	}
-
-	nonce, cipherText := data[:nonceSize], data[nonceSize:]
-	plainText, err := aesGCM.Open(nil, nonce, cipherText, nil)
-	if err != nil {
-		return "", err
+		return "", errors.New("failed to decrypt email")
 	}
 
 	return string(plainText), nil

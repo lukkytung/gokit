@@ -82,7 +82,7 @@ func InitConfig() error {
 	viper.BindEnv("EmailPassword", "EMAIL_PASSWORD")
 	viper.BindEnv("EmailFrom", "EMAIL_FROM")
 	viper.BindEnv("EmailSmtpPort", "EMAIL_SMTP_PORT")
-	viper.BindEnv("EmailEncryptKey", "EMAIL_ENCRYPTION_SECRETKEY")
+	viper.BindEnv("EmailEncrypSecretKey", "EMAIL_ENCRYPTION_SECRETKEY")
 
 	// 反序列化环境变量到 Config 结构体
 	err = viper.Unmarshal(&AppConfig)

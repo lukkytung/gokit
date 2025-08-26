@@ -11,23 +11,23 @@ import (
 
 // 配置结构体
 type Config struct {
-	ServerPort       string
-	DatabaseHost     string
-	DatabasePort     int
-	DatabaseUser     string
-	DatabasePassword string
-	DatabaseName     string
-	RedisHost        string
-	RedisPort        int
-	RedisPassword    string
-	RedisDb          int
-	JwtSecretKey     string
-	EmailSmtpHost    string
-	EmailUser        string
-	EmailPassword    string
-	EmailFrom        string
-	EmailSmtpPort    string
-	EmailEncrypt     string
+	ServerPort           string // 服务器端口
+	DatabaseHost         string // 数据库主机地址
+	DatabasePort         int    // 数据库端口
+	DatabaseUser         string // 数据库用户名
+	DatabasePassword     string // 数据库密码
+	DatabaseName         string // 数据库名称
+	RedisHost            string // Redis 主机地址
+	RedisPort            int    // Redis 端口
+	RedisPassword        string // Redis 密码
+	RedisDb              int    // Redis 数据库索引
+	JwtSecretKey         string // JWT 密钥
+	EmailSmtpHost        string // 邮箱服务器地址
+	EmailUser            string // 邮箱用户名
+	EmailPassword        string // 邮箱密码
+	EmailFrom            string // 邮箱发件人
+	EmailSmtpPort        string // 邮箱端口
+	EmailEncrypSecretKey string // 邮箱加密密钥
 }
 
 // 全局配置变量
@@ -82,7 +82,7 @@ func InitConfig() error {
 	viper.BindEnv("EmailPassword", "EMAIL_PASSWORD")
 	viper.BindEnv("EmailFrom", "EMAIL_FROM")
 	viper.BindEnv("EmailSmtpPort", "EMAIL_SMTP_PORT")
-	viper.BindEnv("EmailEncrypt", "EMAIL_ENCRYPTION_SECRETKEY")
+	viper.BindEnv("EmailEncryptKey", "EMAIL_ENCRYPTION_SECRETKEY")
 
 	// 反序列化环境变量到 Config 结构体
 	err = viper.Unmarshal(&AppConfig)

@@ -132,11 +132,12 @@ func SendEmail(to string, subject string, body string) error {
 	return d.DialAndSend(m)
 }
 
-var secretKey = []byte("12345678901234567890123456789012") // 32字节 = AES-256
-
 // 加密邮箱
 func EncryptEmail(email string) (string, error) {
-	block, err := aes.NewCipher(secretKey)
+
+	secretKey := config.AppConfig.EmailEncrypSecretKey
+
+	block, err := aes.NewCipher([]byte(secretKey))
 	if err != nil {
 		return "", err
 	}
@@ -161,8 +162,8 @@ func DecryptEmail(encrypted string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	block, err := aes.NewCipher(secretKey)
+	secretKey := config.AppConfig.EmailEncrypSecretKey
+	block, err := aes.NewCipher([]byte(secretKey))
 	if err != nil {
 		return "", err
 	}
